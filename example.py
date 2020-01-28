@@ -1,194 +1,151 @@
-# Copyright 2019 Cloudera, Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
-# # Example Python Code for Cloudera Data Science Workbench Training
 
-# ## Basics
+# # Ejemplo de codigo python para ejecutar el CDSW
 
-# In a Python script in CDSW, include comments and code
-# like you would in any other Python script.
+# ## Basicos
 
+# Puedes correr tanto los comentarios como el código en Markdown
+# script sencillo
 
 print("Hello world!")
 
 1 + 1
 
-# When you run part or all of the script, the comments,
-# code, and output are displayed in the session console.
 
-# CDSW supports Jupyter magic commands. For example, you
-# can use the shell magic to issue operating system
-# commands:
+
+
+# CDSW tiene soporte a comandos Jupyter para usar shell y comandos de sistema operativo
 
 !ls -l
 
-# For more details, see
-# [the documentation on Jupyter magic commands](https://www.cloudera.com/documentation/data-science-workbench/latest/topics/cdsw_jupyter.html).
+# Para mas detalles
+# [la documentacion para comandos de Jupyter](https://www.cloudera.com/documentation/data-science-workbench/latest/topics/cdsw_jupyter.html).
 
+# cargar un archivo desde la web
+!curl -o airlines.csv https://s3.amazonaws.com/cdsw-training/airlines.csv
+
+#listar el archivo generado desde internet
+
+!ls -l airlines.csv
 
 # ## Markdown
 
-# Comments in a code file in CDSW can include
-# [Markdown](https://daringfireball.net/projects/markdown/syntax).
-# For example:
+# los comentarios en la line
+# [Markdown](https://daringfireball.net/projects/
+# Este archivo incluye los vuelos que salen de New York,  los aeropuertes de arribo
+# rendimiento de los vuelos que parten desde NY 
+# (EWR, JFK, and LGA) para el año 2013. Estos datos
+# en el archivo `flights.csv`.
 
-# # Heading 1
+# copiar el archivo con el comando `hdfs dfs` 
+# CDSW dentro de la línea de comandos:
 
-# ## Heading 2
-
-# ### Heading 3
-
-# Plain text
-
-# *Emphasized text*
-
-# **Bold text**
-
-# `Monospaced text`
-
-# Bulleted list
-# * Item
-#   * Subitem
-# * Item
-
-# Numbered list
-# 1. First Item
-# 2. Second Item
-# 3. Third Item
-
-# [link](https://www.cloudera.com)
-
-
-# ## Copying Files to HDFS
-
-# This project includes a dataset describing on-time
-# performance for flights departing New York City airports
-# (EWR, JFK, and LGA) in the year 2013. This data was
-# collected by the U.S. Department of Transportation. It
-# is stored here in a comma-separated values (CSV) file
-# named `flights.csv`.
-
-# Copy this file to HDFS by running `hdfs dfs` commands in
-# CDSW using shell magic:
-
-# Delete the `flights` subdirectory and its contents in
-# your home directory, in case it already exists:
+# Borrar el directorio `flights` 
+# que esta en tu home directoy en caso de :
 
 !hdfs dfs -rm -r flights
 
-# Create the `flights` subdirectory:
+# crear el directorio `flights`:
 
 !hdfs dfs -mkdir flights
 
-# Copy the file into it:
+# poner el archivo de vuelos en el directorio hdfs (corregir la ruta de origen):
 
-!hdfs dfs -put flights.csv flights/
+!hdfs dfs -put data/flights.csv flights/
 
-# The file `flights.csv` is now stored in the subdirectory
-# `flights` in your home directory in HDFS.
+# poner el archivo flights.csv   que ahora esta en el directorio `data/flights`
+# `flights` en tu directorio home del HDFS en la carpeta flights.
 
+!hdfs dfs -ls flights/
 
-# ## Using Apache Spark 2 with PySpark
+# ## Usar Apache Spark 2 con PySpark
 
-# CDSW provides a virtual gateway to the cluster, which
-# you can use to run Apache Spark jobs using PySpark,
+# CDSW provee un gateway virtual hacia el cluster
+# que tu puedes usar para correr Apache Spark usando pyspark
 # Spark's Python API.
 
-# Before you connect to Spark: If you are using a secure
-# cluster with Kerberos authentication, you must first go
-# to the Hadoop Authentication section of your CDSW user
-# settings and enter your Kerberos principal and password.
+# Antes de conectarte a Spark por el cluster: si estas usando un 
+# cluster con autenticacion Kerberos, primero debes ir a la sección 
+# de autenticar tu usuario Hadoop en CDSW indicado anteriormente 
+# configurar y entrar el usuario y password de Kerberos 
 
 
 # ### Connecting to Spark
 
-# Spark SQL is Spark's module for working with structured
-# data. PySpark is Spark's Python API. The `pyspark.sql`
-# module exposes Spark SQL functionality to Python.
+# Spark SQL es el módulo de Spark para trabajar con datos estructurados
+# PySpark es la API de Python de Spark. El modulo `pyspark.sql`
+#  expone la funcionalidad de Spark SQL a Python.
 
-# Begin by importing `SparkSession`, PySpark's main entry
-# point:
+# Importando el punto inicial `SparkSession`, PySpark's main entry
 
 from pyspark.sql import SparkSession
 
-# Then call the `getOrCreate()` method of
-# `SparkSession.builder` to connect to Spark. This
-# example connects to Spark on YARN and gives a name to
-# the Spark application:
+# cuando llamas al metodo `getOrCreate()` que pertenece a
+# `SparkSession.builder` para conectarse a Spark. Este
+# ejemplo conecta Spark sobre Yarn y da un nombre a la 
+#aplicación spark :
 
 spark = SparkSession.builder \
   .master("yarn") \
   .appName("cdsw-training") \
   .getOrCreate()
 
-# Now you can use the `SparkSession` named `spark` to read
-# data into Spark.
+# ahora puede usarse la  `SparkSession` llamada `spark` para leer
+# datos dentro de spark.
 
 
-# ### Reading Data
+# ### Leer datos
 
-# Read the flights dataset from HDFS. This data is in CSV
-# format and includes a header row. Spark can infer the
-# schema automatically from the data:
+# Leer el data set que esta con formato CSV
+#  el 
+# esquema de datos se genera automaticamente a partir de los datos:
 
 flights = spark.read.csv("flights/", header=True, inferSchema=True)
 
-# The result is a Spark DataFrame named `flights`.
+# El resultado es un DataFrame de spark llamado `flights`.
 
 
-# ### Inspecting Data
+# ### Inspeccionar los datos
 
-# Inspect the DataFrame to gain a basic understanding
-# of its structure and contents.
+# Analizar el Dataframe para ver la estructura y contenido
 
-# Print the number of rows:
+
+# imprimir el nnumero de columnas:
 
 flights.count()
 
-# Print the schema:
+# Imprimir el esquema:
 
 flights.printSchema()
 
-# Inspect one or more variables (columns):
+# Analizar una o más variables (columnas) :
 
 flights.describe("arr_delay").show()
 flights.describe("arr_delay", "dep_delay").show()
 
-# Print the first five rows:
+# Imprimir las primeras 5 filas :
 
 flights.limit(5).show()
 
-# Or more concisely:
+# o mas consisamente:
 
 flights.show(5)
 
-# Print the first 20 rows (the default number is 20):
+# Por defecto show muestra las 20 primeras filas
 
 flights.show()
 
-# `show()` can cause rows to wrap onto multiple lines,
-# making the output hard to read. To make the output
-# more readable, use `toPandas()` to return a pandas
-# DataFrame. For example, return the first five rows
-# as a pandas DataFrame and display it:
+# `show()` no es muy versatil cuando hay muchas columnas
+#  para eso es preferible mandar una muestra de x filas
+# a un dataframe de Pandas que es otra estructura que se
+# usa para ser usado en algoritmos de machine learning:
 
 flights_pd = flights.limit(5).toPandas()
 flights_pd
 
-# To display the pandas DataFrame in a scrollable
-# grid, import pandas and set the pandas option
-# `display.html.table_schema` to `True`:
+# Para mostrar el dataframe de pandas con un scroll 
+# grid se puede usar el seteo para mostrarlos como 
+# una tabla html con este comando :
 
 import pandas as pd
 pd.set_option("display.html.table_schema", True)
@@ -200,22 +157,23 @@ flights_pd
 # DataFrame.
 
 
-# ### Transforming Data
+# ### Transformar Datos
 
 # Spark SQL provides a set of functions for manipulating
 # Spark DataFrames. Each of these methods returns a
 # new DataFrame.
 
-# `select()` returns the specified columns:
+# `select()` retorna la columna específica:
 
 flights.select("carrier").show()
 
-# `distinct()` returns distinct rows:
+# `distinct()` retorna filas distintas por la columna 
+# específica:
 
 flights.select("carrier").distinct().show()
 
-# `filter()` (or its alias `where()`) returns rows that
-# satisfy a Boolean expression.
+# `filter()` (or su alias `where()`) retorna las filas
+# que satisfacen las condiciones.
 
 # To disambiguate column names and literal strings,
 # import and use the functions `col()` and `lit()`:
@@ -224,6 +182,20 @@ from pyspark.sql.functions import col, lit
 
 flights.filter(col("dest") == lit("SFO")).show()
 
+# version where
+
+flights.where(col("dest") == lit("SFO")).show()
+
+#otra opcion
+
+flights.where("dest = 'SFO'").show()
+
+# Recordar que los dataFrames son inmutables
+
+#para verlo mejor
+
+flights.filter(col("dest") == lit("SFO")).limit(10).toPandas()
+
 # `orderBy()` (or its alias `sort()`) returns rows
 # arranged by the specified columns:
 
@@ -231,8 +203,17 @@ flights.orderBy("month", "day").show()
 
 flights.orderBy("month", "day", ascending=False).show()
 
-# `withColumn()` adds a new column or replaces an existing
-# column using the specified expression:
+# escoger un campo
+
+flights \
+   .filter(col("dest") == lit("SFO")) \
+   .orderBy("month", "day", ascending=False) \
+   .select("month", "day","origin","dep_delay") \
+   .show()
+
+# `withColumn()` agrega una nueva columna o reemplaza
+#  una existente
+#  usando la expresión especificada:
 
 flights \
   .withColumn("on_time", col("arr_delay") <= 0) \
@@ -278,8 +259,17 @@ flights \
        mean("dep_delay").alias("avg_dep_delay") \
   ) \
   .show()
+  
 
-# You can chain together multiple DataFrame methods:
+flights \
+  .groupBy("origin") \
+  .agg( \
+       count("*").alias("num_departures"), \
+       mean("dep_delay").alias("avg_dep_delay") \
+  ) \
+  .toPandas()
+
+# Pueden encadenar multiples métodos de los Dataframes:
 
 flights \
   .filter(col("dest") == lit("BOS")) \
@@ -291,6 +281,18 @@ flights \
   .orderBy("avg_dep_delay") \
   .show()
 
+  
+nyc_bos_dep_delay_pd= flights \
+  .filter(col("dest") == lit("BOS")) \
+  .groupBy("origin") \
+  .agg( \
+       count("*").alias("num_departures"), \
+       mean("dep_delay").alias("avg_dep_delay") \
+  ) \
+  .orderBy("avg_dep_delay") 
+  
+nyc_bos_dep_delay_pd.toPandas()
+  
 
 # ### Using SQL Queries
 
@@ -348,6 +350,25 @@ delays_sample_pd = flights \
 # relationship between departure delay and arrival delay:
 
 delays_sample_pd.plot.scatter(x="dep_delay", y="arr_delay")
+
+
+#  mejorar el gráfico filtrando más datos de 
+# demoras que van mas allá de las 5 horas
+
+delays_sample_pd = flights \
+  .filter ((col("dep_delay")<300) & (col("arr_delay")<300)) \
+  .select("dep_delay", "arr_delay") \
+  .dropna() \
+  .sample(withReplacement=False, fraction=0.05) \
+  .toPandas()
+
+# grafico los datos filtrados
+
+delays_sample_pd.plot.scatter(x="dep_delay", y="arr_delay")
+
+# ejemplo hacer otro ejercicio de Barras usando 
+# una estructura de agrupamiento 
+
 
 # The scatterplot seems to show a positive linear
 # association between departure delay and arrival delay.
