@@ -1,23 +1,11 @@
-# Copyright 2019 Cloudera, Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+
 
 # # Example R Code for Cloudera Data Science Workbench Training
 
 # ## Basics
 
-# In an R script in CDSW, include comments and code like
-# you would in any other R script.
+# En un script de R en CDSW, incluir los comentariosIn
+# como se haría en cualquier codigo R-squared
 
 print("Hello world!")
 
@@ -62,7 +50,7 @@ system("ls -l")
 # 2. Second Item
 # 3. Third Item
 
-# [link](https://www.cloudera.com)
+# [link cloudera](https://www.cloudera.com)
 
 
 # ## Copying Files to HDFS
@@ -88,11 +76,12 @@ system("hdfs dfs -mkdir flights")
 
 # Copy the file into it:
 
-system("hdfs dfs -put flights.csv flights/")
+system("hdfs dfs -put data/flights.csv flights/")
 
 # The file `flights.csv` is now stored in the subdirectory
 # `flights` in your home directory in HDFS.
 
+system("hdfs dfs -ls  flights/")
 
 # ## Using Apache Spark 2 with sparklyr
 
@@ -152,9 +141,9 @@ flights <- spark_read_csv(
 # Spark DataFrame.
 
 
-# ### Inspecting Data
+# ### Analizar los datos (inspeccionar)
 
-# Inspect the Spark DataFrame to gain a basic
+# Inspeccionar el DataFrame Inspecctor Inspect the Spark DataFrame to gain a basic
 # understanding of its structure and contents.
 
 # To make the code more readable, the examples below use
@@ -164,7 +153,7 @@ flights <- spark_read_csv(
 
 flights %>% sdf_nrow()
 
-# Print the column names:
+# Imprimir las columnas disponibles:
 
 flights %>% colnames()
 
@@ -173,6 +162,10 @@ flights %>% colnames()
 
 flights
 
+# To show all the columns, even if rows wrap onto multiple 
+# lines, set `width = Inf`:
+
+riders %>% print(n = 5, width = Inf)
 
 # ### Transforming Data Using dplyr Verbs
 
@@ -199,32 +192,43 @@ flights
 
 library(dplyr)
 
+
 # `select()` returns the specified columns:
 
 flights %>% select(carrier)
 
-# `distinct()` works like `select()` but returns only
-# distinct values:
+
+
+# forma desorganizada
+
+select(flights, year:day, arr_delay, dep_delay)
+
+# forma con el operador %>%
+
+flights %>% select(year:day, arr_delay, dep_delay)
+
+# `distinct()` trabaja como `select()` pero retorna solo
+# valores distintos:
 
 flights %>% distinct(carrier)
 
-# `filter()` returns rows that satisfy a Boolean
-# expression:
+# `filter()` retorna las filas que satisfacen
+# la expresión booleana:
 
 flights %>% filter(dest == "SFO")
 
-# `arrange()` returns rows arranged by the specified
-# columns:
+# `arrange()` retorna las filas arregladas(ordinadas)
+# por las columnas específicas:
 
 flights %>% arrange(month, day)
 
-# The default sort order is ascending. Use the helper
-# function `desc()` to sort by a column in descending
-# order:
+# El orden por defecto es ascendente por lo que 
+# se usa la función de ayuda `desc()` para ordenar una columna
+# por el orden descendente:
 
 flights %>% arrange(desc(month), desc(day))
 
-# `mutate()` adds new columns or replaces existing
+# `mutate()` agrega nuevas columnas o reemplaza las adds new columns or replaces existing
 # columns using the specified expressions:
 
 flights %>% mutate(on_time = arr_delay <= 0)

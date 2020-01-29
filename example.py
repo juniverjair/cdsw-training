@@ -152,16 +152,16 @@ pd.set_option("display.html.table_schema", True)
 
 flights_pd
 
-# Caution: When working with a large Spark DataFrame,
-# limit the number of rows before returning a pandas
-# DataFrame.
+# Precausion: cuando se trabaja con SPark dataframe 
+# limitar el numero de filas que retornara la consulta
+# antes de mandarlo al Pandas
 
 
 # ### Transformar Datos
 
-# Spark SQL provides a set of functions for manipulating
-# Spark DataFrames. Each of these methods returns a
-# new DataFrame.
+# Spark SQL provee un conjunto de funciones para
+# manipular Spark Dataframes,  cada método retorna
+# un nuevo DataFrame 
 
 # `select()` retorna la columna específica:
 
@@ -175,8 +175,8 @@ flights.select("carrier").distinct().show()
 # `filter()` (or su alias `where()`) retorna las filas
 # que satisfacen las condiciones.
 
-# To disambiguate column names and literal strings,
-# import and use the functions `col()` and `lit()`:
+# se usa una cuncion col para hacer referencia a una columna
+# y una columna lit para valores literales :
 
 from pyspark.sql.functions import col, lit
 
@@ -186,7 +186,7 @@ flights.filter(col("dest") == lit("SFO")).show()
 
 flights.where(col("dest") == lit("SFO")).show()
 
-#otra opcion
+#otra opcion dentro del where
 
 flights.where("dest = 'SFO'").show()
 
@@ -247,10 +247,12 @@ flights \
   .agg(countDistinct("carrier").alias("num_carriers")) \
   .show()
 
-# `groupBy()` groups data by the specified columns, so
-# aggregations can be computed by group:
+# `groupBy()` agrupa datos por columnas especificas 
+# las agregaciones pueden ser calculadas por grupos:
 
 from pyspark.sql.functions import mean
+
+# la sentencia agg() te permite crear un Dataframe agregado
 
 flights \
   .groupBy("origin") \
@@ -294,17 +296,20 @@ nyc_bos_dep_delay_pd= flights \
 nyc_bos_dep_delay_pd.toPandas()
   
 
-# ### Using SQL Queries
+# ### Usando querys SQl
 
-# Instead of using Spark DataFrame methods, you can
-# use a SQL query to achieve the same result.
+# En vez de usar métodos Spark DataFrame 
+# usar un query que consiga el mismo resultado 
 
-# First you must create a temporary view with the
-# DataFrame you want to query:
+
+# Primero se debe de crear una tabla temporal
+# a partir del dataframe 
+# que sea vista por el contexto de Spark
+
 
 flights.createOrReplaceTempView("flights")
 
-# Then you can use SQL to query the DataFrame:
+# para usarlo dentro de un query:
 
 spark.sql("""
   SELECT origin,
@@ -316,24 +321,23 @@ spark.sql("""
   ORDER BY avg_dep_delay""").show()
 
 
-# ### Visualizing Data from Spark
+# ### Visualizando datos desde spark
 
-# You can create data visualizations in CDSW using Python
-# plotting libraries such as Matplotlib.
+# se puede usar librerías como Matplotlib
 
-# When using Matplotlib, you might need to first use this
-# Jupyter magic command to ensure that the plots display
-# properly in CDSW:
+# En el caso de usar matplotlib 
+# es necesario usar esta sentencia de Jupyter comando magic
+# para  asegurar que las imagenes se muestren bien:
 
 %matplotlib inline
 
-# To visualize data from a Spark DataFrame with
-# Matplotlib, you must first return the data as a pandas
-# DataFrame.
+# Tpara  visualizar usando matplotlib se debe
+# pasar el dataframe de spark a Pandas primero.
 
-# Caution: When working with a large Spark DataFrame,
-# you might need to sample, filter, or aggregate before
-# returning a pandas DataFrame.
+# Se debe de filtrar o limitar el número de registros
+# representativos para usar Pandas y Matplotlib
+# tanto para mejorar la visualización como para evitar
+# colapsar el dataframe de Pandas.
 
 # For example, you can select the departure delay and
 # arrival delay columns from the `flights` dataset,
