@@ -141,6 +141,8 @@ flights <- spark_read_csv(
 # Spark DataFrame.
 
 
+
+
 # ### Analizar los datos (inspeccionar)
 
 # Inspeccionar el DataFrame Inspecctor Inspect the Spark DataFrame to gain a basic

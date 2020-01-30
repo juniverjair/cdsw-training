@@ -15,8 +15,6 @@ print("Hello world!")
 # una alternativa es que el usuario admin,  los cree en HUE
 
 
-
-
 # CDSW tiene soporte a comandos Jupyter para usar shell y comandos de sistema operativo
 
 !ls -l
