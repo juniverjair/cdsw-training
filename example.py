@@ -13,6 +13,9 @@ print("Hello world!")
 
 
 
+# CDSW supports Jupyter magic commands. For example, you
+# can use the shell magic to issue operating system
+# commands:
 
 # CDSW tiene soporte a comandos Jupyter para usar shell y comandos de sistema operativo
 
@@ -41,7 +44,7 @@ print("Hello world!")
 # CDSW dentro de la línea de comandos:
 
 # Borrar el directorio `flights` 
-# que esta en tu home directoy en caso de :
+# your home directory, in case it already exists:
 
 !hdfs dfs -rm -r flights
 
@@ -80,10 +83,10 @@ print("Hello world!")
 
 from pyspark.sql import SparkSession
 
-# cuando llamas al metodo `getOrCreate()` que pertenece a
-# `SparkSession.builder` para conectarse a Spark. Este
-# ejemplo conecta Spark sobre Yarn y da un nombre a la 
-#aplicación spark :
+# Then call the `getOrCreate()` method of
+# `SparkSession.builder` to connect to Spark. This
+# example connects to Spark on YARN and gives a name to
+# the Spark application:
 
 spark = SparkSession.builder \
   .master("yarn") \
@@ -107,8 +110,8 @@ flights = spark.read.csv("flights/", header=True, inferSchema=True)
 
 # ### Inspeccionar los datos
 
-# Analizar el Dataframe para ver la estructura y contenido
-
+# Inspect the DataFrame to gain a basic understanding
+# estructura y contenido.
 
 # imprimir el nnumero de columnas:
 
@@ -127,41 +130,42 @@ flights.describe("arr_delay", "dep_delay").show()
 
 flights.limit(5).show()
 
-# o mas consisamente:
+# Or more concisely:
 
 flights.show(5)
 
-# Por defecto show muestra las 20 primeras filas
+# Print the first 20 rows (the default number is 20):
 
 flights.show()
 
-# `show()` no es muy versatil cuando hay muchas columnas
-#  para eso es preferible mandar una muestra de x filas
-# a un dataframe de Pandas que es otra estructura que se
-# usa para ser usado en algoritmos de machine learning:
+# `show()` can cause rows to wrap onto multiple lines,
+# making the output hard to read. To make the output
+# more readable, use `toPandas()` to return a pandas
+# DataFrame. For example, return the first five rows
+# as a pandas DataFrame and display it:
 
 flights_pd = flights.limit(5).toPandas()
 flights_pd
 
-# Para mostrar el dataframe de pandas con un scroll 
-# grid se puede usar el seteo para mostrarlos como 
-# una tabla html con este comando :
+# To display the pandas DataFrame in a scrollable
+# grid, import pandas and set the pandas option
+# `display.html.table_schema` to `True`:
 
 import pandas as pd
 pd.set_option("display.html.table_schema", True)
 
 flights_pd
 
-# Precausion: cuando se trabaja con SPark dataframe 
-# limitar el numero de filas que retornara la consulta
-# antes de mandarlo al Pandas
+# Caution: When working with a large Spark DataFrame,
+# limit the number of rows before returning a pandas
+# DataFrame.
 
 
 # ### Transformar Datos
 
-# Spark SQL provee un conjunto de funciones para
-# manipular Spark Dataframes,  cada método retorna
-# un nuevo DataFrame 
+# Spark SQL provides a set of functions for manipulating
+# Spark DataFrames. Each of these methods returns a
+# new DataFrame.
 
 # `select()` retorna la columna específica:
 
@@ -175,8 +179,8 @@ flights.select("carrier").distinct().show()
 # `filter()` (or su alias `where()`) retorna las filas
 # que satisfacen las condiciones.
 
-# se usa una cuncion col para hacer referencia a una columna
-# y una columna lit para valores literales :
+# To disambiguate column names and literal strings,
+# import and use the functions `col()` and `lit()`:
 
 from pyspark.sql.functions import col, lit
 
@@ -186,7 +190,7 @@ flights.filter(col("dest") == lit("SFO")).show()
 
 flights.where(col("dest") == lit("SFO")).show()
 
-#otra opcion dentro del where
+#otra opcion
 
 flights.where("dest = 'SFO'").show()
 
@@ -247,12 +251,10 @@ flights \
   .agg(countDistinct("carrier").alias("num_carriers")) \
   .show()
 
-# `groupBy()` agrupa datos por columnas especificas 
-# las agregaciones pueden ser calculadas por grupos:
+# `groupBy()` groups data by the specified columns, so
+# aggregations can be computed by group:
 
 from pyspark.sql.functions import mean
-
-# la sentencia agg() te permite crear un Dataframe agregado
 
 flights \
   .groupBy("origin") \
@@ -296,20 +298,17 @@ nyc_bos_dep_delay_pd= flights \
 nyc_bos_dep_delay_pd.toPandas()
   
 
-# ### Usando querys SQl
+# ### Using SQL Queries
 
-# En vez de usar métodos Spark DataFrame 
-# usar un query que consiga el mismo resultado 
+# Instead of using Spark DataFrame methods, you can
+# use a SQL query to achieve the same result.
 
-
-# Primero se debe de crear una tabla temporal
-# a partir del dataframe 
-# que sea vista por el contexto de Spark
-
+# First you must create a temporary view with the
+# DataFrame you want to query:
 
 flights.createOrReplaceTempView("flights")
 
-# para usarlo dentro de un query:
+# Then you can use SQL to query the DataFrame:
 
 spark.sql("""
   SELECT origin,
@@ -321,23 +320,24 @@ spark.sql("""
   ORDER BY avg_dep_delay""").show()
 
 
-# ### Visualizando datos desde spark
+# ### Visualizing Data from Spark
 
-# se puede usar librerías como Matplotlib
+# You can create data visualizations in CDSW using Python
+# plotting libraries such as Matplotlib.
 
-# En el caso de usar matplotlib 
-# es necesario usar esta sentencia de Jupyter comando magic
-# para  asegurar que las imagenes se muestren bien:
+# When using Matplotlib, you might need to first use this
+# Jupyter magic command to ensure that the plots display
+# properly in CDSW:
 
 %matplotlib inline
 
-# Tpara  visualizar usando matplotlib se debe
-# pasar el dataframe de spark a Pandas primero.
+# To visualize data from a Spark DataFrame with
+# Matplotlib, you must first return the data as a pandas
+# DataFrame.
 
-# Se debe de filtrar o limitar el número de registros
-# representativos para usar Pandas y Matplotlib
-# tanto para mejorar la visualización como para evitar
-# colapsar el dataframe de Pandas.
+# Caution: When working with a large Spark DataFrame,
+# you might need to sample, filter, or aggregate before
+# returning a pandas DataFrame.
 
 # For example, you can select the departure delay and
 # arrival delay columns from the `flights` dataset,
