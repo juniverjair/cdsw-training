@@ -17,7 +17,7 @@ print("Hello world!")
 # To run an operating system shell command in an R script
 # in CDSW, use the R function `system()`. For example:
 
-system("ls -l")
+system("ls -la")
 
 
 # ## Markdown
