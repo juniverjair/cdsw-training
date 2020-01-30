@@ -17,7 +17,7 @@ print("Hello world!")
 
 # CDSW tiene soporte a comandos Jupyter para usar shell y comandos de sistema operativo
 
-!ls -l
+!ls -la 
 
 # Para mas detalles
 # [la documentacion para comandos de Jupyter](https://www.cloudera.com/documentation/data-science-workbench/latest/topics/cdsw_jupyter.html).
@@ -27,7 +27,7 @@ print("Hello world!")
 
 #listar el archivo generado desde internet
 
-!ls -la airlines.csv
+!ls -l -a   airlines.csv
 
 # ## Markdown
 
