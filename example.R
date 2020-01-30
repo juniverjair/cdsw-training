@@ -4,8 +4,8 @@
 
 # ## Basics
 
-# In an R script in CDSW, include comments and code like
-# you would in any other R script.
+# En un script de R en CDSW, incluir los comentariosIn
+# como se haría en cualquier codigo R-squared
 
 print("Hello world!")
 
@@ -153,7 +153,7 @@ flights <- spark_read_csv(
 
 flights %>% sdf_nrow()
 
-# Print the column names:
+# Imprimir las columnas disponibles:
 
 flights %>% colnames()
 
@@ -162,6 +162,10 @@ flights %>% colnames()
 
 flights
 
+# To show all the columns, even if rows wrap onto multiple 
+# lines, set `width = Inf`:
+
+riders %>% print(n = 5, width = Inf)
 
 # ### Transforming Data Using dplyr Verbs
 
