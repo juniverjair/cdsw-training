@@ -27,7 +27,7 @@ print("Hello world!")
 
 #listar el archivo generado desde internet
 
-!ls -l airlines.csv
+!ls -la airlines.csv
 
 # ## Markdown
 
