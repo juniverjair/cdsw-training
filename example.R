@@ -1,30 +1,31 @@
 
 
-# # Example R Code for Cloudera Data Science Workbench Training
+# # Ejemplo codigo en R (sparkly)
 
-# ## Basics
+# ## Basico
 
 # En un script de R en CDSW, incluir los comentariosIn
-# como se haría en cualquier codigo R-squared
+# como se haría en cualquier codigo R
 
 print("Hello world!")
 
 1 + 1
 
-# When you run part or all of the script, the comments,
-# code, and output are displayed in the session console.
+# Cuando se corre una parte o todo del script 
+# los comentarios igual son mostrados en la sesion
+# de la consola 
 
-# To run an operating system shell command in an R script
-# in CDSW, use the R function `system()`. For example:
+# Para correr comandos shells en sistema operativo
+# usar `system()`. :
 
-system("ls -la")
+system("ls -l")
 
 
-# ## Markdown
+# ## Markdown  - Comentarios
 
-# Comments in a code file in CDSW can include
+
 # [Markdown](https://daringfireball.net/projects/markdown/syntax).
-# For example:
+# Ejemplo:
 
 # # Heading 1
 
@@ -53,80 +54,69 @@ system("ls -la")
 # [link cloudera](https://www.cloudera.com)
 
 
-# ## Copying Files to HDFS
+# ## Copiar archivos a HDFS
 
-# This project includes a dataset describing on-time
-# performance for flights departing New York City airports
-# (EWR, JFK, and LGA) in the year 2013. This data was
-# collected by the U.S. Department of Transportation. It
-# is stored here in a comma-separated values (CSV) file
-# named `flights.csv`.
+# El proyecto incluye un dataset que describe
+# el perfomance de los vuelos de salida de New York
+# de los aeropuertos (EWR, JFK, and LGA) anio 2013
+# fuente U.S. Department of Transportation. 
+# formato archivos csv, bajo el nombre `flights.csv`.
 
-# Copy this file to HDFS by running `hdfs dfs` commands in
-# CDSW using the R function `system()`:
-
-# Delete the `flights` subdirectory and its contents in
-# your home directory, in case it already exists:
+# borrar la carpeta flights 
 
 system("hdfs dfs -rm -r flights")
 
-# Create the `flights` subdirectory:
+# crear el sbudirectorio  `flights` :
 
 system("hdfs dfs -mkdir flights")
 
-# Copy the file into it:
+# copiar el archivo local al hdfs:
 
 system("hdfs dfs -put data/flights.csv flights/")
 
-# The file `flights.csv` is now stored in the subdirectory
-# `flights` in your home directory in HDFS.
+# verificar
 
 system("hdfs dfs -ls  flights/")
 
-# ## Using Apache Spark 2 with sparklyr
+# ## Usando Apache Spark 2 con sparklyr
 
-# CDSW provides a virtual gateway to the cluster, which
-# you can use to run Apache Spark jobs. Cloudera recommends
-# using [sparklyr](https://spark.rstudio.com) as the R
-# interface to Spark.
+# Acceso al cluster usando
+# [sparklyr](https://spark.rstudio.com) as the R
 
-# Install the sparklyr package from CRAN (if it is not
-# already installed). This might take several minutes:
+# Instalar sparklyr desde CRAN (si no ha sido 
+# instalado anteriormente:
 
 if(!"sparklyr" %in% rownames(installed.packages())) {
   install.packages("sparklyr")
 }
 
-# Before you connect to Spark: If you are using a secure
-# cluster with Kerberos authentication, you must first go
-# to the Hadoop Authentication section of your CDSW user
-# settings and enter your Kerberos principal and password.
+# Antes de conectarte a Spark: Si se usa un usuario que esta asegurado
+# sobre el cluster con autenticacion Kerberos, debes ir a 
+# la seccion de Hadoop Authentication section del usuario de CDSW 
+# configurar y entrar el usuario y password de kerberos Kerberos
 
 
-# ### Connecting to Spark
+# ### Conectando a Spark
 
-# Begin by loading the sparklyr package:
+# leer el paquete sparklyr :
 
 library(sparklyr)
 
-# Then call the `spark_connect()` function to connect to
-# Spark. This example connects to Spark on YARN and gives
-# a name to the Spark application:
+# Then call the `spark_connect()` funcion para conectarse
+# a Spark, en este caso sobre yarn dandole un nombre a 
+# la aplicacion Spark:
 
 spark <- spark_connect(
   master = "yarn",
   app_name = "cdsw-training"
 )
 
-# Now you can use the connection object named `spark` to
-# read data into Spark.
+# esa variable  `spark` la usaras para ler datos desde Spark
 
 
-# ### Reading Data
+# ### Leer los datos
 
-# Read the flights dataset from HDFS. This data is in CSV
-# format and includes a header row. Spark can infer the
-# schema automatically from the data:
+
 
 flights <- spark_read_csv(
   sc = spark,
@@ -136,9 +126,9 @@ flights <- spark_read_csv(
   infer_schema = TRUE
 )
 
-# The result is a Spark DataFrame named `flights`. Note
-# that this is not an R data frame—it is a pointer to a
-# Spark DataFrame.
+# El resultado es un Data Frame llamado  `flights`. 
+# Notar que esto no es un dataframe de R es un puntero
+# a un Dataframe Spark
 
 
 
@@ -148,10 +138,10 @@ flights <- spark_read_csv(
 # Inspeccionar el DataFrame Inspecctor Inspect the Spark DataFrame to gain a basic
 # understanding of its structure and contents.
 
-# To make the code more readable, the examples below use
-# the pipe operator `%>%`.
+# Hacer el código mas legible usnado el operador de 
+# pipe  `%>%`.
 
-# Print the number of rows:
+# imprimir el número de filas:
 
 flights %>% sdf_nrow()
 
@@ -159,43 +149,45 @@ flights %>% sdf_nrow()
 
 flights %>% colnames()
 
-# Print the first 10 rows of data, for as many columns
-# as fit on the screen (this is the default behavior):
+# por defecto imprime las 10 primeras filas 
+# pero se puede generar un quiebre si hay muchas columnas
+# (este es el comportamiento por omision):
 
 flights
 
-# To show all the columns, even if rows wrap onto multiple 
-# lines, set `width = Inf`:
+# para mostrar todas las columnas, 
+# aun si las filas se muestran o intercalan en 
+# multiples lineas, setear el parámetro con Inf
+#`width = Inf`:
 
 riders %>% print(n = 5, width = Inf)
 
-# ### Transforming Data Using dplyr Verbs
+# ### Transformando los datos usando verbos dplyr 
 
-# sparklyr works together with the popular R package
-# [dplyr](http://dplyr.tidyverse.org). sparklyr enables
-# you to use dplyr *verbs* to manipulate data with Spark.
+# sparklyr trabaja en conjunto con el paquete popular
+# [dplyr](http://dplyr.tidyverse.org). sparklyr habilita 
+# usar dplyr *verbs* para manipular los datos con Spark.
 
-# The main dplyr verbs are:
-# * `select()` to select columns
-# * `filter()` to filter rows
-# * `arrange()` to order rows
-# * `mutate()` to create new columns
-# * `summarise()` to aggregate
+# Las instrucciones mas comunes para manipular datos:
+# * `select()` seleccionar filas
+# * `filter()` filtrar filas
+# * `arrange()` ordenar filas
+# * `mutate()` crear nuevas columnas 
+# * `summarise()` agregar
 
-# There are also some other, less important verbs, like
-# `rename()` and `transmute()`, that are variations on
-# the main verbs.
 
-# In addition to verbs, dplyr also has the function
-# `group_by()`, which allows you to perform operations by
-# group.
+# `rename()` and `transmute()` variaciones de los 
+# verbos principales.
 
-# Load the dplyr package:
+
+# `group_by()`, operaciones de agrupacion.
+
+# leer el paquete dplyr:
 
 library(dplyr)
 
 
-# `select()` returns the specified columns:
+# `select()` retorna columnas especificas:
 
 flights %>% select(carrier)
 
@@ -237,21 +229,21 @@ flights %>% mutate(on_time = arr_delay <= 0)
 
 flights %>% mutate(flight_code = paste0(carrier, flight))
 
-# `summarise()` performs aggregations using the specified
-# expressions.
+# `summarise()` ejecuta agregaciones con las columnas especificas.
 
-# Use aggregation functions such as `n()`, `n_distinct()`,
-# `sum()`, and `mean()`. With some of these functions,
-# you must specify `na.rm = TRUE` to silence warnings
-# about missing values:
+# funciones de agregacion `n()`, `n_distinct()`,
+# `sum()`, and `mean()`. con algunas funciones se debe,
+# especificar `na.rm = TRUE` para no mostrar alertas
+# por falta de datos:
 
 flights %>% summarise(n = n())
 
 flights %>%
   summarise(num_carriers = n_distinct(carrier))
 
-# `group_by()` groups data by the specified columns, so
-# aggregations can be computed by group:
+# `group_by()` agruga datos para una columna especifica 
+# las agregaciones pueden (usando summarise) pueden 
+# calcularse por grupos ejemplo:
 
 flights %>%
   group_by(origin) %>%
@@ -260,7 +252,7 @@ flights %>%
     avg_dep_delay = mean(dep_delay, na.rm = TRUE)
   )
 
-# You can chain together multiple dplyr verbs:
+# se puede encadenar las instrucciones dplyr verbs:
 
 flights %>%
   filter(dest == "BOS") %>%
@@ -272,10 +264,10 @@ flights %>%
   arrange(avg_dep_delay)
 
 
-# ### Using SQL Queries
+# ### usando SQL querys directamente
 
-# Instead of using dplyr verbs, you can use a SQL query
-# to achieve the same result:
+# En vez de usar dplyr verbs, se puede usar SQL query
+# para obtener el mismo resultado:
 
 tbl(spark, sql("
   SELECT origin,
@@ -287,17 +279,15 @@ tbl(spark, sql("
   ORDER BY avg_dep_delay"))
 
 
-# ### Spark DataFrames Functions
+# ### Funciones para Spark DataFrames 
 
-# In addition to the dplyr verbs, there are also some
-# other data manipulation functions you can use with
-# sparklyr. For example:
+# además de los dplyr verbs, hay otras funciones:
 
-# `na.omit()` filters out rows with missing values:
+# `na.omit()` filtrar filas que contengan un valor nulo:
 
 flights %>% na.omit()
 
-# `sdf_sample()` returns a random sample of rows:
+# `sdf_sample()`  retorna una muestra de filas aleatorias:
 
 flights %>%
   sdf_sample(fraction = 0.05, replacement = FALSE)
@@ -305,21 +295,15 @@ flights %>%
 
 # ### Visualizing Data from Spark
 
-# You can create data visualizations in CDSW using R
-# graphics packages such as ggplot2.
+# se puede visualizar datos usando la libreria ggplot2.
 
-# To visualize data from a Spark DataFrame with ggplot2,
-# you must first return the data as an R data frame. To
-# do this, use the `collect()` function.
+# se debe de pasar del dataframe de spark a un data frame de R 
+# para esto usar `collect()` funcion.
 
-# Caution: When working with a large Spark DataFrame,
-# you might need to sample, filter, or aggregate before
-# using `collect()` to return an R data frame.
+# Caution: recomendacion filtrar, muestrear o agregar 
+# antes de usar `collect()` para retornar un data frame normal
+# de R.
 
-# For example, you can select the departure delay and
-# arrival delay columns from the `flights` dataset,
-# randomly sample 5% of non-missing records, and return
-# the result as an R data frame:
 
 delays_sample_df <- flights %>%
   select(dep_delay, arr_delay) %>%
@@ -327,35 +311,31 @@ delays_sample_df <- flights %>%
   sdf_sample(fraction = 0.05, replacement = FALSE) %>%
   collect()
 
-# Then you can create a scatterplot showing the
-# relationship between departure delay and arrival delay:
+# crear el diagrama de dispersion
+# relacion entre  departure delay y arrival delay:
 
 library(ggplot2)
 
 ggplot(delays_sample_df, aes(x=dep_delay, y=arr_delay)) +
   geom_point()
 
-# The scatterplot seems to show a positive linear
-# association between departure delay and arrival delay.
 
 
-# ### Machine Learning with MLlib
+
+# ### Machine Learning con MLlib
 
 # MLlib is Spark's machine learning library.
 
-# As an example, let's examine the relationship between
-# departure delay and arrival delay using a linear
-# regression model.
-
-# First, create a Spark DataFrame with only the relevant
-# columns and with missing values removed:
+# Esta particion aleatoria de los datos ensamblados
+# genera una 
+# Muestra aleatoria (70% registros) y una para pruebas (30% de
+# registros):
 
 flights_to_model <- flights %>%
   select(dep_delay, arr_delay) %>%
   na.omit()
 
-# Randomly split the data into a training sample (70% of
-# records) and a test sample (30% of records):
+
 
 samples <- flights_to_model %>%
   sdf_partition(train = 0.7, test = 0.3)
@@ -366,20 +346,20 @@ samples <- flights_to_model %>%
 model <- samples$train %>%
   ml_linear_regression(arr_delay ~ dep_delay)
 
-# Examine the model coefficients and other model summary
-# information:
+# Examinar el modelo respecto al  Examine the model intercepcion en el origen
+# y los coeficientes
 
 summary(model)
 
-# Use the model to generate predictions for the test
-# sample:
+# usar el modelo para generar predicciones sobre el test:
 
 pred <- model %>%
   ml_predict(samples$test)
 
-# Evaluate the model on the test sample by computing
-# R-squared, which gives the fraction of the variance
-# in the test sample that is explained by the model:
+# Evaluar el modelo usando 
+# R cuadrado (R-squared) es la fracción de la varianza
+# en la prueba test que es explicada por el modelo:
+
 
 pred %>%
   summarise(r_squared = cor(arr_delay, prediction)^2)
