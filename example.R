@@ -160,7 +160,7 @@ flights
 # multiples lineas, setear el parámetro con Inf
 #`width = Inf`:
 
-riders %>% print(n = 5, width = Inf)
+flights %>% print(n = 5, width = Inf)
 
 # ### Transformando los datos usando verbos dplyr 
 
@@ -293,14 +293,14 @@ flights %>%
   sdf_sample(fraction = 0.05, replacement = FALSE)
 
 
-# ### Visualizing Data from Spark
+# ### Visualizando datos desde Spark
 
 # se puede visualizar datos usando la libreria ggplot2.
 
 # se debe de pasar del dataframe de spark a un data frame de R 
 # para esto usar `collect()` funcion.
 
-# Caution: recomendacion filtrar, muestrear o agregar 
+# precaucion: recomendacion filtrar, muestrear o agregar 
 # antes de usar `collect()` para retornar un data frame normal
 # de R.
 
@@ -324,7 +324,7 @@ ggplot(delays_sample_df, aes(x=dep_delay, y=arr_delay)) +
 
 # ### Machine Learning con MLlib
 
-# MLlib is Spark's machine learning library.
+# MLlib es la libreria de machine learning de spark.
 
 # Esta particion aleatoria de los datos ensamblados
 # genera una 
@@ -340,8 +340,8 @@ flights_to_model <- flights %>%
 samples <- flights_to_model %>%
   sdf_partition(train = 0.7, test = 0.3)
 
-# Specify the linear regression model and fit it to the
-# training sample:
+# especificar en la regresion lineal los datos de entrenamiento 
+# de la muestra obtenida :
 
 model <- samples$train %>%
   ml_linear_regression(arr_delay ~ dep_delay)
@@ -365,8 +365,8 @@ pred %>%
   summarise(r_squared = cor(arr_delay, prediction)^2)
 
 
-# ### Cleanup
+# ### limpieza
 
-# Disconnect from Spark:
+# desconectarse del Spark:
 
 spark_disconnect(spark)
