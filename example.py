@@ -12,7 +12,7 @@ print("Hello world!")
 1 + 1
 
 # paso previo crear los usuarios en hdfs 
-# una alternativa es que el usuario admin,  los cree en HUE
+# una alternativa es que el usuario admin, dd los cree en HUE
 
 
 # CDSW tiene soporte a comandos Jupyter para usar shell y comandos de sistema operativo
